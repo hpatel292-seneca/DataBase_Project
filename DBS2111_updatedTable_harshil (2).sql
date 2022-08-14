@@ -1,8 +1,9 @@
+--drop table country;
 CREATE TABLE country   (
     code char(2) NOT NULL PRIMARY KEY,
     Name varchar(60) NOT NULL
 );
-
+--drop table province;
 CREATE TABLE province(
     provcode char(2) PRIMARY KEY,
     provname varchar(40) NOT NULL,
@@ -10,7 +11,7 @@ CREATE TABLE province(
     CONSTRAINT province_country_fk FOREIGN KEY (countrycode) REFERENCES country(code)
 );
 
-
+--drop table person;
 CREATE TABLE Person ( 
 
     personID INT PRIMARY KEY, 
@@ -28,24 +29,7 @@ CREATE TABLE Person (
     CONSTRAINT person_province_fk FOREIGN KEY (provcode) REFERENCES province(provcode)
 ); 
 
---CREATE TABLE brandmanager ( 
---
---    ID INT PRIMARY KEY, 
---
---    firstName VARCHAR(25) NOT NULL, 
---
---    lastName VARCHAR(25) NOT NULL, 
--- 
---    email VARCHAR(60) NOT NULL, 
---
---    provcode char(2),
---    
---    postalcode char(6),
---    
---    CONSTRAINT brandmanager_province_fk FOREIGN KEY (provcode) REFERENCES province(provcode)
---); 
---drop table brandmanager;
-
+--drop table customer;
 CREATE TABLE Customer ( 
 
     customerID INT PRIMARY KEY, 
@@ -65,7 +49,21 @@ CREATE TABLE Customer (
 ); 
 
 -- done till here-- 
+--drop table reservation;
+CREATE TABLE Reservation ( 
 
+    reservationID INT PRIMARY KEY, 
+
+    reservationDate Date NOT NULL, 
+
+    reservationStatus number(1) NOT NULL, 
+
+    customerID INT NOT NULL, 
+    
+    CONSTRAINT customer_fk FOREIGN KEY (customerID) REFERENCES Customer(customerID) 
+
+); 
+--drop table payment;
 CREATE TABLE Payment ( 
 
     paymentID INT PRIMARY KEY, 
@@ -78,26 +76,15 @@ CREATE TABLE Payment (
 
     payment number(9,2) NOT NULL, 
 
-    transferDate Date NOT NULL 
+    transferDate Date NOT NULL, 
+    
+    reservationID int,
+    
+    CONSTRAINT payment_reservation_fk FOREIGN KEY (reservationID) REFERENCES reservation(reservationID)
+
 ); 
 
-CREATE TABLE Reservation ( 
-
-    reservationID INT PRIMARY KEY, 
-
-    reservationDate Date NOT NULL, 
-
-    reservationStatus number(1) NOT NULL, 
-
-    customerID INT NOT NULL, 
-    
-    paymentID int,
-    
-    CONSTRAINT payment_reservation_fk FOREIGN KEY (paymentID) REFERENCES Payment(paymentID),
-
-    CONSTRAINT customer_fk FOREIGN KEY (customerID) REFERENCES Customer(customerID) 
-
-); 
+--drop table type;
  CREATE TABLE Type ( 
 
     typeID number(5) PRIMARY KEY, 
@@ -108,7 +95,31 @@ CREATE TABLE Reservation (
 
     maintainCost number(9,2) NOT NULL  
 
-);   
+);
+
+--drop table reservation_type;
+CREATE TABLE Reservation_type ( 
+
+    reservationID INT, 
+
+    typeID number(5), 
+
+    startDate Date NOT NULL, 
+
+    endDate Date NOT NULL, 
+
+    price number(9,2) NOT NULL,
+    
+    CONSTRAINT m_reservation_pk PRIMARY KEY (reservationID, typeID), 
+
+    CONSTRAINT m_reservation_bridge_fk FOREIGN KEY (reservationID) REFERENCES Reservation(reservationID), 
+
+
+    CONSTRAINT m_type_bridge_fk FOREIGN KEY (typeID) REFERENCES type(typeID) 
+
+); 
+
+--drop table employee;
 CREATE TABLE Employee ( 
 
     employeeID INT PRIMARY KEY, 
@@ -120,38 +131,39 @@ CREATE TABLE Employee (
     CONSTRAINT employee_person_fk FOREIGN KEY (employeeid) REFERENCES person(personID)
 
 ); 
+--drop table brand;
 CREATE TABLE Brand ( 
 
     brandID number(5) PRIMARY KEY, 
 
     brandName VARCHAR(60) NOT NULL, 
 
-    brandLevel number(3), 
+    brandLevel number(3),  
 
-    brandManagerID INT NOT NULL, 
-
-    CONSTRAINT level_check CHECK (brandLevel BETWEEN 1 AND 5), 
-    
-    CONSTRAINT brand_manager_fk FOREIGN KEY (brandManagerID) REFERENCES employee(employeeID)
-
+    CONSTRAINT level_check CHECK (brandLevel BETWEEN 1 AND 5)
 ); 
 --drop table brand;
+--drop table Location;
 CREATE TABLE Location ( 
 
     locationID number(5) PRIMARY KEY, 
 
-    address VARCHAR(60) NOT NULL, 
+    street VARCHAR(60) NOT NULL, 
 
-    locationManagerID INT NOT NULL, 
+    city VARCHAR(60) NOT NULL, 
 
-    brandID number(5) NOT NULL, 
-
-    CONSTRAINT brand_fk FOREIGN KEY (brandID) REFERENCES Brand(brandID),
+    provcode char(2) NOT NULL,
     
-    CONSTRAINT location_locationmanager_fk FOREIGN KEY (locationmanagerid) REFERENCES employee(employeeID)
+    brandID number(5) NOT NULL, 
+    
+    postalcode char(6) NOT NULL,
+    
+    CONSTRAINT location_province_fk FOREIGN KEY (provcode) REFERENCES province(provcode),
+
+    CONSTRAINT location_brand_fk FOREIGN KEY (brandID) REFERENCES Brand(brandID)
     
 ); 
-
+--drop table employee_location;
 CREATE TABLE Employee_location ( 
 
     employeeID INT,
@@ -186,7 +198,7 @@ CREATE TABLE Employee_location (
 
 
  
-
+--drop table room;
 CREATE TABLE Room ( 
 
     roomID INT PRIMARY KEY, 
@@ -204,27 +216,6 @@ CREATE TABLE Room (
     CONSTRAINT room_type_fk FOREIGN KEY (typeID) REFERENCES Type(typeID), 
 
     CONSTRAINT room_location_fk FOREIGN KEY (locationID) REFERENCES Location(locationID) 
-
-); 
-
-CREATE TABLE Reservation_room ( 
-
-    reservationID INT, 
-
-    roomID number(5), 
-
-    startDate Date NOT NULL, 
-
-    endDate Date NOT NULL, 
-
-    price number(9,2) NOT NULL,
-    
-    CONSTRAINT m_reservation_pk PRIMARY KEY (reservationID, roomID), 
-
-    CONSTRAINT m_reservation_bridge_fk FOREIGN KEY (reservationID) REFERENCES Reservation(reservationID), 
-
-
-    CONSTRAINT m_room__bridge_fk FOREIGN KEY (roomID) REFERENCES room(roomID) 
 
 ); 
 

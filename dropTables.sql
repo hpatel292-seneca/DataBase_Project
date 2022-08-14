@@ -8,3 +8,5 @@ DROP TABLE Location;
 DROP TABLE Brand;
 DROP TABLE Customer;
 DROP TABLE Person;
+drop table province;
+drop table country;
