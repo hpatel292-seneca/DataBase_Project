@@ -31,7 +31,7 @@ on room.locationID = location.locationID;
 
 
 
----senario 3: check the employee in one location
+---senario 3: count the employee in every location
 
 
 
