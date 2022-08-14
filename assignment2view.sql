@@ -36,7 +36,14 @@ on room.locationID = location.locationID;
 
 
 --senario 4: order seasonal change 
-
+select count(*) from reservation_type group by EXTRACT(MONTH FROM reservation_type.startDate);
+--senario 4: order seasonal change 
+select sum((reservation_type.endDate - reservation_type.startDate)*(reservation_type.price - type.maintainCost)) as "earn", 
+EXTRACT(MONTH FROM reservation_type.startDate) as "month"
+from reservation_type left join type
+on reservation_type.typeID = type.typeID
+group by EXTRACT(MONTH FROM reservation_type.startDate)
+order by sum((reservation_type.endDate - reservation_type.startDate)*(reservation_type.price - type.maintainCost)) desc;
 
 
 
