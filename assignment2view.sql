@@ -36,10 +36,16 @@ on room.locationID = location.locationID;
 
 
 
----senario 3: count the employee in every location
-select locationID, count(employeeID)
+---senario 3: list every location
+select distinct employee_location.locationID, location.street, location.city, province.provname, country.name, location.postalcode
 from employee_location
-group by locationID;
+left join location
+on location.locationid = employee_location.locationID
+left join province
+on location.provcode = province.provcode
+left join country
+on province.countrycode = country.code;
+
 
 
 --senario 4: order seasonal trend 
